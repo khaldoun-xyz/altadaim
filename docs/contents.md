@@ -1,4 +1,4 @@
-# What you get with Altadim
+# What you get with Altadaim
 
 Note: This list is incomplete (you already get a lot more than mentioned below).
 The list will be updated on an ongoing basis.
