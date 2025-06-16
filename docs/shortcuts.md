@@ -1,4 +1,4 @@
-# Shortcuts within Altadim
+# Shortcuts within Altadaim
 
 These shortcuts draw inspiration from Omakub's
 [hotkeys section](https://manual.omakub.org/1/read/29/hotkeys).

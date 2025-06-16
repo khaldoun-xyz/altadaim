@@ -24,7 +24,7 @@ error_exit() {
 
 # Check if the script is run with root privileges
 if [[ $EUID -ne 0 ]]; then
-  error_exit "This script must be run with sudo or as root. Please run 'sudo bash ./install_altadim.sh'"
+  error_exit "This script must be run with sudo or as root. Please run 'sudo bash ./install_altadaim.sh'"
 fi
 
 # Store the original user who invoked sudo
@@ -388,7 +388,7 @@ EOF"
   log "--- Section 15: Updating .bashrc with Aliases and Git Prompt ---"
 
   BASHRC_PATH="/home/$ORIGINAL_USER/.bashrc"
-  BASHRC_MARKER="# --------------------------- ADDED BY ALTADIM --------------------------------"
+  BASHRC_MARKER="# --------------------------- ADDED BY ALTADAIM --------------------------------"
 
   # Check if the block already exists
   if ! sudo -u "$ORIGINAL_USER" grep -q "$BASHRC_MARKER" "$BASHRC_PATH"; then
@@ -408,9 +408,9 @@ PS1=\"\$GREEN\\u\$NO_COLOR:\$BLUE\\w\$YELLOW\\\$(parse_git_branch)\$NO_COLOR\$ \
 # add neovim alias
 alias n='~/nvim-linux-x86_64.appimage'
 "
-    log ".bashrc updated with ALTADIM customization for user $ORIGINAL_USER."
+    log ".bashrc updated with ALTADAIM customization for user $ORIGINAL_USER."
   else
-    log ".bashrc already contains ALTADIM customization. Skipping append."
+    log ".bashrc already contains ALTADAIM customization. Skipping append."
   fi
 
   log "--- Section 16: Setting Up Git via SSH ---"
