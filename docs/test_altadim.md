@@ -9,7 +9,7 @@ using VirtualBox and Vagrant.
 ## Prepare your setup
 
 - First, update your system packages: `sudo apt update && sudo apt upgrade`
-- Install VirtualBox: `sudo apt install virtualbox`
+- Install VirtualBox: Download from [https://www.virtualbox.org/](https://www.virtualbox.org/)
 - Install Vagrant: `sudo apt install vagrant`
 
 ## Run Altadim in your Virtual Machine (VM)
