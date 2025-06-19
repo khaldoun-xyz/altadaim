@@ -9,7 +9,7 @@ using VirtualBox and Vagrant.
 ## Prepare your setup
 
 - First, update your system packages: `sudo apt update && sudo apt upgrade`
-- Install VirtualBox: Download the Ububntu 24.04 onefrom [https://www.virtualbox.org/wiki/Linux_Downloads](https://www.virtualbox.org/wiki/Linux_Downloads)
+- Install VirtualBox: Download the Ububntu 24.04 one from [https://www.virtualbox.org/wiki/Linux_Downloads](https://www.virtualbox.org/wiki/Linux_Downloads)
 - Install Vagrant: `sudo apt install vagrant`
 
 ## Run Altadaim in your Virtual Machine (VM)
@@ -35,7 +35,7 @@ Your Virtual Machine (VM) should now display a **"Running"** status. To make the
 
 Here's an example of what a running VM looks like in the VirtualBox Manager:
 
-![VirtualBox VM Running Status Screenshot](img/screenshot-vm-manager.png)
+![VirtualBox VM Running Status Screenshot](https://github.com/khaldoun-xyz/altadaim/blob/add-documentation/img/screenshot-vm-manager.png)
 
 #### Accessing Your VM
 
