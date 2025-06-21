@@ -204,7 +204,7 @@ main() {
 
   log "Installing Aider (AI code assistant) using pipx for user $ORIGINAL_USER."
   sudo -u "$ORIGINAL_USER" pipx install aider-install || log "WARNING: Failed to install aider-install with pipx for user $ORIGINAL_USER. Check internet connection or pipx issues."
-  # pipx handles the executable path, so no need for 'aider-install' command here.
+  sudo -u "$ORIGINAL_USER" aider-install || log "WARNING: Failed to run aider-install for user $ORIGINAL_USER."
 
   log "Global Python applications installed."
 
