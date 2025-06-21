@@ -9,7 +9,7 @@ using VirtualBox and Vagrant.
 ## Prepare your setup
 
 - First, update your system packages: `sudo apt update && sudo apt upgrade`
-- Install VirtualBox: Download the Ububntu 24.04 one from [https://www.virtualbox.org/wiki/Linux_Downloads](https://www.virtualbox.org/wiki/Linux_Downloads)
+- Install VirtualBox: Download the version for Ubuntu 24.04 from [https://www.virtualbox.org/wiki/Linux_Downloads](https://www.virtualbox.org/wiki/Linux_Downloads)
 - Install the latest Vagrant version:
 
 ``` bash
