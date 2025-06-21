@@ -33,7 +33,7 @@ sudo apt update && sudo apt install vagrant
 - Navigate to the `/vagrant` directory: `cd /vagrant`
 - Run the install script: `sudo bash install_altadaim.sh`
 
-### Verify VirtualBox VM Running Status
+### Use VirtualBox VM
 
 - Once the install command has been successfully executed in your terminal,
   open your Oracle VirtualBox Manager.
@@ -44,7 +44,7 @@ sudo apt update && sudo apt install vagrant
 
 ![VirtualBox VM Running Status Screenshot](../img/screenshot-vm-manager.png)
 
-#### Accessing Your VM
+#### Accessing your VM
 
 - To log in and access your VM, you will typically need the following credentials:
   - Username: `vagrant`
@@ -52,7 +52,7 @@ sudo apt update && sudo apt install vagrant
   - Note: These are the default credentials if you have
     not changed them during the setup process.
 
-#### Basic VM Demonstration
+#### Basic VM demonstration
 
 - This short video demonstrates a basic operation within an "Altadaim" Virtual Machine:
   [Watch the Altadaim VM Demonstration Here](https://www.loom.com/share/2db65f3ce37543589a6ce449e25431f0?sid=a37d8fcb-6b9e-4629-bb90-6ff9f4a73f1d)
