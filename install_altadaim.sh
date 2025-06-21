@@ -409,7 +409,7 @@ PS1=\"\$GREEN\\u\$NO_COLOR:\$BLUE\\w\$YELLOW\\\$(parse_git_branch)\$NO_COLOR\$ \
 
 # add neovim alias
 alias n='~/nvim-linux-x86_64.appimage'
-"
+EOF"
     log ".bashrc updated with ALTADAIM customization for user $ORIGINAL_USER."
   else
     log ".bashrc already contains ALTADAIM customization. Skipping append."
