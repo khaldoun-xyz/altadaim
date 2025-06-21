@@ -258,7 +258,7 @@ return {
 EOF
   log "LazyExtras plugin imports written to $EXTRAS_FILE"
 
-  # Set LSP option in a separate configuration file
+  # Set LSP option in config/init.lua
   CONFIG_DIR="/home/$ORIGINAL_USER/.config/nvim/lua/config"
   sudo -u "$ORIGINAL_USER" mkdir -p "$CONFIG_DIR"
   sudo -u "$ORIGINAL_USER" tee "$CONFIG_DIR/init.lua" >/dev/null <<EOF
