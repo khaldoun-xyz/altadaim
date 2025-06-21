@@ -87,7 +87,7 @@ setup_git_ssh() {
   sudo -u "$ORIGINAL_USER" cat "$ssh_key.pub"
   log "You should now add this key to your Git hosting service (e.g., GitHub/GitLab)."
   log "Opening GitHub SSH key settings page in Brave Browser..."
-  sudo -u "$ORIGINAL_USER" brave-browser "https://github.com/settings/ssh/new" || log "WARNING: Could not open GitHub SSH key page. Please open it manually."
+  sudo -u "$ORIGINAL_USER" brave-browser "https://github.com/settings/ssh/new" || log ">>>>> WARNING <<<<<: Could not open GitHub SSH key page. Please open it manually: https://github.com/settings/ssh/new"
   log "Testing SSH connection to GitHub (you may see a one-time prompt to confirm the host fingerprint)..."
   sudo -u "$ORIGINAL_USER" ssh -T git@github.com || log "SSH test to GitHub failed. This may be expected if the key hasn’t been added yet."
 }
@@ -261,11 +261,10 @@ EOF
   # Set LSP option in a separate configuration file
   CONFIG_DIR="/home/$ORIGINAL_USER/.config/nvim/lua/config"
   sudo -u "$ORIGINAL_USER" mkdir -p "$CONFIG_DIR"
-  LSP_FILE="$CONFIG_DIR/lsp.lua"
-  sudo -u "$ORIGINAL_USER" tee "$LSP_FILE" >/dev/null <<EOF
-  vim.g.lazyvim_python_lsp = "basedpyright"
+  sudo -u "$ORIGINAL_USER" tee "$CONFIG_DIR/init.lua" >/dev/null <<EOF
+vim.g.lazyvim_python_lsp = "basedpyright"
 EOF
-  log "Set lazyvim_python_lsp = 'basedpyright' in $LSP_FILE"
+  log "Set lazyvim_python_lsp = 'basedpyright' in lua/config/init.lua"
 
   OPTIONS_FILE="/home/$ORIGINAL_USER/.config/nvim/lua/config/options.lua"
   sudo -u "$ORIGINAL_USER" tee -a "$OPTIONS_FILE" >/dev/null <<EOF
@@ -278,20 +277,11 @@ EOF
   # Create init.lua if it doesn't exist
   if ! sudo -u "$ORIGINAL_USER" test -f "$INIT_FILE"; then
     sudo -u "$ORIGINAL_USER" tee "$INIT_FILE" >/dev/null <<EOF
--- Load custom config/lsp.lua (LSP and other early globals)
-require("config.lsp")
+-- Load config globals
+require("config")
 
 -- Load custom options
 require("config.options")
-
--- Import LazyVim plugins
-require("lazyvim.plugins")
-
--- Import LazyVim extras
-require("lazyvim.plugins.extras")
-
--- Import your own plugins
-require("plugins")
 
 -- Then bootstrap LazyVim
 require("config.lazy")
