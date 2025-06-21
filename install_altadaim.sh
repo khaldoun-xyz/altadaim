@@ -258,32 +258,44 @@ return {
 EOF
   log "LazyExtras plugin imports written to $EXTRAS_FILE"
 
-  # Set LSP option EARLY in config
+  # Set LSP option in a separate configuration file
   CONFIG_DIR="/home/$ORIGINAL_USER/.config/nvim/lua/config"
   sudo -u "$ORIGINAL_USER" mkdir -p "$CONFIG_DIR"
-  sudo -u "$ORIGINAL_USER" tee "$CONFIG_DIR/init.lua" >/dev/null <<EOF
-vim.g.lazyvim_python_lsp = "basedpyright"
+  LSP_FILE="$CONFIG_DIR/lsp.lua"
+  sudo -u "$ORIGINAL_USER" tee "$LSP_FILE" >/dev/null <<EOF
+  vim.g.lazyvim_python_lsp = "basedpyright"
 EOF
-  log "Set lazyvim_python_lsp = 'basedpyright' in lua/config/init.lua"
+  log "Set lazyvim_python_lsp = 'basedpyright' in $LSP_FILE"
+
   OPTIONS_FILE="/home/$ORIGINAL_USER/.config/nvim/lua/config/options.lua"
   sudo -u "$ORIGINAL_USER" tee -a "$OPTIONS_FILE" >/dev/null <<EOF
-
 -- Add any custom options here if needed
 EOF
   log "Verified options.lua exists"
+
   INIT_FILE="/home/$ORIGINAL_USER/.config/nvim/init.lua"
   sudo -u "$ORIGINAL_USER" mkdir -p "$(dirname "$INIT_FILE")"
   # Create init.lua if it doesn't exist
   if ! sudo -u "$ORIGINAL_USER" test -f "$INIT_FILE"; then
     sudo -u "$ORIGINAL_USER" tee "$INIT_FILE" >/dev/null <<EOF
--- Load custom config/init.lua (LSP and other early globals)
-pcall(require, "config")
+-- Load custom config/lsp.lua (LSP and other early globals)
+require("config.lsp")
 
 -- Load custom options
 require("config.options")
 
+-- Import LazyVim plugins
+require("lazyvim.plugins")
+
+-- Import LazyVim extras
+require("lazyvim.plugins.extras")
+
+-- Import your own plugins
+require("plugins")
+
 -- Then bootstrap LazyVim
 require("config.lazy")
+
 EOF
     log "Created new init.lua with config.init and config.options"
   else
