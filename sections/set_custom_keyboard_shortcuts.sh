@@ -29,3 +29,5 @@ gsettings set "${SCHEMA}.custom-keybinding:$SHORTCUT_PATH" name "$SHORTCUT_NAME"
 gsettings set "${SCHEMA}.custom-keybinding:$SHORTCUT_PATH" command "$COMMAND" || echo "Failed to set shortcut command $COMMAND."
 gsettings set "${SCHEMA}.custom-keybinding:$SHORTCUT_PATH" binding "$BINDING" || echo "Failed to set shortcut binding $BINDING."
 gsettings get org.gnome.settings-daemon.plugins.media-keys custom-keybindings
+
+echo "✅ Custom shortcuts set up."

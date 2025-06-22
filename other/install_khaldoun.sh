@@ -82,6 +82,11 @@ setup_python_project_ssh() {
 
 }
 
+log "--- Creating ~/virtualenvs/ and ~/programming/ directories ---"
+log "If it doesn't exist yet, creating '~/$ORIGINAL_USER/virtualenvs' and '~/$ORIGINAL_USER/programming' directories for $ORIGINAL_USER."
+sudo -u "$ORIGINAL_USER" mkdir -p "/home/$ORIGINAL_USER/virtualenvs" || log "WARNING: Directory ~/$ORIGINAL_USER/virtualenvs could not be created."
+sudo -u "$ORIGINAL_USER" mkdir -p "/home/$ORIGINAL_USER/programming" || log "WARNING: Directory ~/$ORIGINAL_USER/programming could not be created."
+
 log "--- Cloning Khaldoun Projects (via SSH) ---"
 log "IMPORTANT: Ensure your SSH keys are set up with GitHub for these repositories for user $ORIGINAL_USER."
 declare -A khaldoun_ssh_repos
