@@ -372,11 +372,6 @@ EOF"
   " || log "WARNING: Failed to install Node.js or markdownlint-cli2 for user $ORIGINAL_USER."
   log "Node.js and markdownlint-cli2 installed successfully for user $ORIGINAL_USER."
 
-  log "--- Section 13: Python Linting Tools (via pipx) ---"
-  log "Installing mypy-django for Python linting using pipx for user $ORIGINAL_USER."
-  sudo -u "$ORIGINAL_USER" pipx install mypy-django || log "WARNING: Failed to install mypy-django with pipx for user $ORIGINAL_USER. Python linting might be affected."
-  log "Python linting tools installed."
-
   log "--- Section 14: Installing Brave Browser ---"
   log "Adding Brave Browser repository and installing Brave."
   # Ensure keyring directory exists
