@@ -32,7 +32,9 @@ set_up_git_ssh() {
 }
 
 main() {
+  sudo -u "$ORIGINAL_USER" git config --global credential.helper store || error_exit "Failed to configure Git credential helper for user $ORIGINAL_USER."
   set_up_git_ssh
+
   echo "✅ Git ssh is set up."
 }
 

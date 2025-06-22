@@ -1,7 +1,4 @@
 #!/usr/bin/env bash
-
-# --- Error Handling ---
-
 # Exit immediately if a command exits with a non-zero status.
 set -e
 # Treat unset variables as an error when substituting.
@@ -9,10 +6,7 @@ set -u
 # Exit if any command in a pipeline fails.
 set -o pipefail
 
-# Define log file
 LOG_FILE="$HOME/ubuntu_setup_$(date +%Y%m%d_%H%M%S).log"
-
-# Function to log messages to console and log file
 log() {
   echo "$(date +'%Y-%m-%d %H:%M:%S') - $1" | tee -a "$LOG_FILE"
 }
@@ -22,31 +16,18 @@ error_exit() {
   exit 1
 }
 
-# Check if the script is run with root privileges
 if [[ $EUID -ne 0 ]]; then
   error_exit "This script must be run with sudo or as root. Please run 'sudo bash ./install_altadaim.sh'"
 fi
 
-# Store the original user who invoked sudo
-# This is crucial for operations that need to run as the regular user (e.g., Git cloning with SSH keys)
 ORIGINAL_USER="$SUDO_USER"
 if [ -z "$ORIGINAL_USER" ]; then
   error_exit "Could not determine the original user who invoked sudo. Please ensure SUDO_USER is set."
 fi
 log "Script invoked by user: $ORIGINAL_USER"
 
-# Determine Ubuntu version for conditional installations
 UBUNTU_VERSION=$(lsb_release -rs)
 log "Detected Ubuntu Version: $UBUNTU_VERSION"
-
-# --- Helper Functions ---
-
-# Function to configure Git's global credential helper for the original user
-configure_git() {
-  log "Configuring Git global credential helper for user $ORIGINAL_USER."
-  sudo -u "$ORIGINAL_USER" git config --global credential.helper store || error_exit "Failed to configure Git credential helper for user $ORIGINAL_USER."
-}
-# --- Main Installation Logic ---
 
 main() {
   log "Starting Altadaim's installer script."
