@@ -67,9 +67,22 @@ setup_python_project_ssh() {
   else
     log "No requirements.txt found for $project_name. Skipping pip install -r."
   fi
+
+  # Install pre-commit hooks if .pre-commit-config.yaml exists
+  if [ -f "$project_dir/.pre-commit-config.yaml" ]; then
+    log "Installing pre-commit hooks for $project_name."
+    sudo -u "$ORIGINAL_USER" bash -c "
+      source \"$venv_dir/bin/activate\"
+      cd \"$project_dir\"
+      pre-commit install
+    " || log "WARNING: Failed to install pre-commit hooks for $project_name."
+  else
+    log "No .pre-commit-config.yaml found in $project_name. Skipping pre-commit install."
+  fi
+
 }
 
-log "--- Step 1: Cloning Khaldoun Projects (via SSH) ---"
+log "--- Cloning Khaldoun Projects (via SSH) ---"
 log "IMPORTANT: Ensure your SSH keys are set up with GitHub for these repositories for user $ORIGINAL_USER."
 declare -A khaldoun_ssh_repos
 khaldoun_ssh_repos["altadaim"]="git@github.com:khaldoun-xyz/altadaim.git"
@@ -87,7 +100,7 @@ done
 
 log "Khaldoun projects cloning complete."
 
-log "--- Step 2: updating .bashrc with aliases ---"
+log "--- Updating .bashrc with aliases ---"
 
 BASHRC_PATH="/home/$ORIGINAL_USER/.bashrc"
 BASHRC_MARKER="# --------------------------- added by khaldoun --------------------------------"
