@@ -26,6 +26,13 @@ if [ -z "$ORIGINAL_USER" ]; then
 fi
 log "Script invoked by user: $ORIGINAL_USER"
 
+TARGET_DIR="/home/$ORIGINAL_USER/altadaim"
+cleanup() {
+  log "Cleaning up: removing $TARGET_DIR"
+  rm -rf "$TARGET_DIR" || log "WARNING: Failed to remove $TARGET_DIR"
+}
+trap cleanup EXIT
+
 UBUNTU_VERSION=$(lsb_release -rs)
 log "Detected Ubuntu Version: $UBUNTU_VERSION"
 
@@ -35,7 +42,6 @@ main() {
 
   log "--- Get necessary scripts ---"
   REPO_URL="https://github.com/khaldoun-xyz/altadaim"
-  TARGET_DIR="/home/$ORIGINAL_USER/altadaim"
   if [ ! -d "$TARGET_DIR" ]; then
     log "Cloning Altadaim setup scripts from GitHub..."
     sudo -u "$ORIGINAL_USER" git clone --branch add-documentation "$REPO_URL" "$TARGET_DIR" || error_exit "Failed to clone Altadaim setup repository."
