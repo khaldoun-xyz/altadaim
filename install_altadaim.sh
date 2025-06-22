@@ -135,9 +135,8 @@ install_latest_github_release() {
 # --- Main Installation Logic ---
 
 main() {
-  log "Starting Ubuntu Development Environment Setup Script."
+  log "Starting Altadaim's installer script."
   log "This script will install various development tools and configure your system."
-  log "Please ensure you have an active internet connection."
 
   log "--- Section 1: System Update and Upgrade ---"
   log "Updating and upgrading system packages. This may take some time."
@@ -172,6 +171,7 @@ main() {
     "pipx"                # For installing global Python applications like aider and mypy-django
     "libffi-dev"          # Required for building cffi and other Python packages with C extensions
     "libpq-dev"           # Required for building psycopg2-binary (PostgreSQL adapter)
+    "dbus-x11"            # Required for setting keyboard shortcuts as sudo
   )
 
   # Conditionally add python3.10-venv for Ubuntu 22.04 if available/needed,
@@ -411,6 +411,7 @@ PS1=\"\$GREEN\\u\$NO_COLOR:\$BLUE\\w\$YELLOW\\\$(parse_git_branch)\$NO_COLOR\$ \
 alias n='~/nvim-linux-x86_64.appimage'
 EOF"
     log ".bashrc updated with ALTADAIM customization for user $ORIGINAL_USER."
+
   else
     log ".bashrc already contains ALTADAIM customization. Skipping append."
   fi
@@ -418,8 +419,14 @@ EOF"
   log "--- Section 16: Setting Up Git via SSH ---"
   setup_git_ssh
 
+  log "--- Setting custom keyboard shortcuts ---"
+  ORIGINAL_UID=$(id -u "$ORIGINAL_USER")
+  echo "Running keyboard shortcut setup as $ORIGINAL_USER with uid $ORIGINAL_UID"
+  export DBUS_SESSION_BUS_ADDRESS="unix:path=/run/user/$ORIGINAL_UID/bus"
+  sudo -u "$ORIGINAL_USER" DBUS_SESSION_BUS_ADDRESS=$DBUS_SESSION_BUS_ADDRESS bash ./sections/set_custom_keyboard_shortcuts.sh
+
   log "--- Setup Complete! ---"
-  log "Ubuntu Development Environment Setup Script finished successfully (with warnings if any)."
+  log "Altadaim finished (with warnings if any)."
   log "IMPORTANT NEXT STEPS: Reboot for Docker group & NVM (Node Version Manager) changes to take full effect."
   log "Review the log file at $LOG_FILE for any warnings or errors that occurred during execution."
 }
