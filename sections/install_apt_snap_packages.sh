@@ -70,6 +70,10 @@ main_install_apt_packages() {
 
 main_install_snap_packages() {
   install_snap_package "zellij" "--classic"
+  install_snap_package "code" "--classic"
+  sudo -u "$ORIGINAL_USER" code --install-extension eamodio.gitlens
+  sudo -u "$ORIGINAL_USER" code --install-extension ms-python.python
+  sudo -u "$ORIGINAL_USER" code --install-extension charliermarsh.ruff
 }
 
 main_install_apt_packages "$@"
