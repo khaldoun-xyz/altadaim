@@ -39,7 +39,7 @@ main() {
   sudo apt update -y || error_exit "APT update failed."
   sudo apt upgrade -y || error_exit "APT upgrade failed."
   sudo apt dist-upgrade || error_exit "APT dist-upgrade failed."
-  log "System packages updated and upgraded."
+  log "✅ System packages updated and upgraded."
 
   log "--- Installing apt/snap packages ---"
   bash ./sections/install_apt_snap_packages.sh || error_exit "install_apt_snap_packages.sh failed"
