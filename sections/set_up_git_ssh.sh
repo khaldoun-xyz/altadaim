@@ -31,7 +31,27 @@ set_up_git_ssh() {
   sudo -u "$ORIGINAL_USER" ssh -T git@github.com || echo "SSH test to GitHub failed. This may be expected if the key hasn’t been added yet."
 }
 
+prompt_git_identity() {
+  echo ">>>>>>>> Please enter your Git user name: <<<<<<<<<"
+  read -r git_name
+
+  echo ">>>>>>>> Please enter your Git user email: <<<<<<<<<"
+  read -r git_email
+
+  # Validate input is not empty
+  if [[ -z "$git_name" || -z "$git_email" ]]; then
+    echo "Name and email cannot be empty. Please run the script again."
+    exit 1
+  fi
+
+  sudo -u "$ORIGINAL_USER" git config --global user.name "$git_name"
+  sudo -u "$ORIGINAL_USER" git config --global user.email "$git_email"
+
+  echo "Git user.name and user.email configured for $ORIGINAL_USER."
+}
+
 main() {
+  prompt_git_identity
   sudo -u "$ORIGINAL_USER" git config --global credential.helper store || error_exit "Failed to configure Git credential helper for user $ORIGINAL_USER."
   set_up_git_ssh
 
