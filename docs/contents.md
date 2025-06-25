@@ -85,7 +85,7 @@ and type in `psql_NAME`. Et voilà.
 
 ## Git
 
-During the Altadaim installation, you set up your Github ssh key.
+During the Altadaim installation, you set up your GitHub ssh key.
 Version control is a very basic and very useful tool.
 
 - [This video series](https://www.youtube.com/watch?v=rH3zE7VlIMs)
@@ -95,7 +95,7 @@ Version control is a very basic and very useful tool.
 
 ### Git commands
 
-These are good case practises that we use at Khaldoun.
+These are good case practices that we use at Khaldoun.
 
 - When pushing a PR, rebase to the master branch with `git rebase master`
   (make sure you have the most recent master locally!)
