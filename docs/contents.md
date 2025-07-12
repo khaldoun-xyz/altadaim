@@ -50,6 +50,15 @@ If you want to practice vim, ...
   gives you a good basic overview.
 - [this cheatsheet](https://vim.rtorr.com/) contains many useful commands.
 
+#### Lazyvim config
+
+Your Lazyvim setup comes with the following ...
+
+- language linting for Markdown and Python (see plugins/extras.lua)
+- Avante (see plugins/avante.lua)
+- show hidden files (see plugins/snacks.lua)
+- auto-prettify json files (see config/autocmds.lua)
+
 #### Lazyvim Commands
 
 - start Lazyvim in your current directory by entering `n .` in your terminal
