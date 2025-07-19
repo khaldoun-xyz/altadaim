@@ -44,7 +44,7 @@ main() {
   REPO_URL="https://github.com/khaldoun-xyz/altadaim"
   if [ ! -d "$TARGET_DIR" ]; then
     log "Cloning Altadaim setup scripts from GitHub..."
-    sudo -u "$ORIGINAL_USER" git clone --branch add-documentation "$REPO_URL" "$TARGET_DIR" || error_exit "Failed to clone Altadaim setup repository."
+    sudo -u "$ORIGINAL_USER" git clone "$REPO_URL" "$TARGET_DIR" || error_exit "Failed to clone Altadaim setup repository."
   else
     log "Setup directory already exists. Pulling latest changes..."
     sudo -u "$ORIGINAL_USER" git -C "$TARGET_DIR" pull || log "WARNING: Could not update existing setup repo."
