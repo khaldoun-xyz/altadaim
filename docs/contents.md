@@ -55,7 +55,7 @@ If you want to practice vim, ...
 Your Lazyvim setup comes with the following ...
 
 - language linting for Markdown and Python (see plugins/extras.lua)
-- Avante (see plugins/avante.lua)
+- coding assistance with Avante (see plugins/avante.lua)
 - show hidden files (see plugins/snacks.lua)
 - auto-prettify json files (see config/autocmds.lua)
 
