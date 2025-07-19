@@ -92,6 +92,10 @@ main() {
   log "--- Setup Complete! ---"
   log "Altadaim finished (with warnings if any)."
   log "IMPORTANT NEXT STEPS: Reboot to make sure everything is set up correctly."
+
+  SCRIPT_PATH="$(realpath "$0")"
+  log "Removing installer script: $SCRIPT_PATH"
+  rm -f "$SCRIPT_PATH" || log "WARNING: Failed to remove installer script"
 }
 
 main "$@"
