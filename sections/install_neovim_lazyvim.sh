@@ -38,7 +38,7 @@ else
   log "LazyVim config already exists. Skipping clone."
 fi
 
-log "Adding LazyExtras plugins..."
+log "Adding LazyExtras plugins for language support ..."
 EXTRAS_FILE="$nvim_config_dir/lua/plugins/extras.lua"
 mkdir -p "$(dirname "$EXTRAS_FILE")"
 tee "$EXTRAS_FILE" >/dev/null <<EOF
@@ -53,6 +53,33 @@ return {
 }
 EOF
 log "LazyExtras written to $EXTRAS_FILE"
+
+log "Adding Snacks.nvim configuration to show ignored files in tree viewer ..."
+SNACKS_FILE="$nvim_config_dir/lua/plugins/snacks.lua"
+mkdir -p "$(dirname "$SNACKS_FILE")"
+tee "$SNACKS_FILE" >/dev/null <<EOF
+return {
+  {
+    "folke/snacks.nvim",
+    opts = {
+      picker = {
+        -- Show both dotfiles and gitignored files in all pickers
+        hidden = true,
+        ignored = true,
+
+        -- Configure the tree explorer specifically
+        sources = {
+          explorer = {
+            hidden = true,
+            ignored = true,
+          },
+        },
+      },
+    },
+  },
+}
+EOF
+log "Snacks.nvim configuration written to $SNACKS_FILE"
 
 log "Adding LSP to config/init.lua and update options config..."
 CONFIG_DIR="$nvim_config_dir/lua/config"
