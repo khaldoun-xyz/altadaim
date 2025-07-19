@@ -81,6 +81,197 @@ return {
 EOF
 log "Snacks.nvim configuration written to $SNACKS_FILE"
 
+#!/usr/bin/env bash
+
+# Exit on errors, unset vars, or failed pipes
+set -euo pipefail
+
+# Logging
+LOG_FILE="${HOME}/install_neovim_lazyvim_$(date +%Y%m%d_%H%M%S).log"
+log() {
+  echo "$(date +'%Y-%m-%d %H:%M:%S') - $1" | tee -a "$LOG_FILE"
+}
+error_exit() {
+  log "ERROR: $1"
+  exit 1
+}
+
+# User running the script (non-sudo)
+ORIGINAL_USER="${USER}"
+HOME_DIR="/home/$ORIGINAL_USER"
+
+log "Installing Neovim AppImage for user $ORIGINAL_USER."
+
+nvim_appimage="$HOME_DIR/nvim-linux-x86_64.appimage"
+if [ ! -f "$nvim_appimage" ]; then
+  curl -fsSLo "$nvim_appimage" https://github.com/neovim/neovim/releases/latest/download/nvim-linux-x86_64.appimage || error_exit "Failed to download Neovim AppImage."
+  chmod u+x "$nvim_appimage" || error_exit "Failed to make Neovim AppImage executable."
+  log "Neovim AppImage downloaded and made executable."
+else
+  log "Neovim AppImage already exists. Skipping download."
+fi
+
+log "Setting up LazyVim configuration."
+
+nvim_config_dir="$HOME_DIR/.config/nvim"
+if [ ! -d "$nvim_config_dir" ]; then
+  git clone https://github.com/LazyVim/starter "$nvim_config_dir" || error_exit "Failed to clone LazyVim starter config."
+  rm -rf "$nvim_config_dir/.git" || log "WARNING: Failed to remove .git from LazyVim config. Manual cleanup might be needed."
+else
+  log "LazyVim config already exists. Skipping clone."
+fi
+
+log "Adding LazyExtras plugins for language support ..."
+EXTRAS_FILE="$nvim_config_dir/lua/plugins/extras.lua"
+mkdir -p "$(dirname "$EXTRAS_FILE")"
+tee "$EXTRAS_FILE" >/dev/null <<EOF
+return {
+  { import = "lazyvim.plugins.extras.lang.python" },
+  { import = "lazyvim.plugins.extras.lang.markdown" },
+  { import = "lazyvim.plugins.extras.lang.docker" },
+  { import = "lazyvim.plugins.extras.lang.sql" },
+  { import = "lazyvim.plugins.extras.lang.yaml" },
+  { import = "lazyvim.plugins.extras.lang.json" },
+  { import = "lazyvim.plugins.extras.lang.terraform" },
+}
+EOF
+log "LazyExtras written to $EXTRAS_FILE"
+
+log "Adding Snacks.nvim configuration to show ignored files in tree viewer ..."
+SNACKS_FILE="$nvim_config_dir/lua/plugins/snacks.lua"
+mkdir -p "$(dirname "$SNACKS_FILE")"
+tee "$SNACKS_FILE" >/dev/null <<EOF
+return {
+  {
+    "folke/snacks.nvim",
+    opts = {
+      picker = {
+        -- Show both dotfiles and gitignored files in all pickers
+        hidden = true,
+        ignored = true,
+
+        -- Configure the tree explorer specifically
+        sources = {
+          explorer = {
+            hidden = true,
+            ignored = true,
+          },
+        },
+      },
+    },
+  },
+}
+EOF
+log "Snacks.nvim configuration written to $SNACKS_FILE"
+
+log "Adding Avante.nvim configuration ..."
+AVANTE_FILE="$nvim_config_dir/lua/plugins/avante.lua"
+mkdir -p "$(dirname "$AVANTE_FILE")"
+tee "$AVANTE_FILE" >/dev/null <<EOF
+return {
+  "yetone/avante.nvim",
+  event = "VeryLazy",
+  lazy = false,
+  version = false,
+  opts = {
+    provider = "claude",
+    auto_suggestions = true,
+    claude = {
+      endpoint = "https://api.anthropic.com",
+      model = "claude-3-5-sonnet-20241022",
+      temperature = 0,
+      max_tokens = 4096,
+    },
+    behaviour = {
+      auto_suggestions = false,
+      auto_set_highlight_group = true,
+      auto_set_keymaps = true,
+      auto_apply_diff_after_generation = false,
+      support_paste_from_clipboard = false,
+    },
+    mappings = {
+      submit = {
+        normal = "<CR>",
+        insert = "<C-s>", 
+      },
+      diff = {
+        ours = "co",
+        theirs = "ct",
+        all_theirs = "ca",
+        both = "cb",
+        cursor = "cc",
+        next = "]x",
+        prev = "[x",
+      },
+      suggestion = {
+        accept = "<M-l>",
+        next = "<M-]>",
+        prev = "<M-[>",
+        dismiss = "<C-]>",
+      },
+      jump = {
+        next = "]]",
+        prev = "[[",
+      },
+    },
+    hints = { enabled = true },
+    windows = {
+      position = "right",
+      wrap = true,
+      width = 30,
+      sidebar_header = {
+        align = "center",
+        rounded = true,
+      },
+    },
+  },
+  build = "make",
+  dependencies = {
+    "nvim-treesitter/nvim-treesitter",
+    "stevearc/dressing.nvim",
+    "nvim-lua/plenary.nvim",
+    "MunifTanjim/nui.nvim",
+    "nvim-tree/nvim-web-devicons",
+    "zbirenbaum/copilot.lua",
+    {
+      "HakonHarnes/img-clip.nvim",
+      event = "VeryLazy",
+      opts = {
+        default = {
+          embed_image_as_base64 = false,
+          prompt_for_file_name = false,
+          drag_and_drop = {
+            insert_mode = true,
+          },
+          use_absolute_path = true,
+        },
+      },
+    },
+    {
+      'MeanderingProgrammer/render-markdown.nvim',
+      opts = {
+        file_types = { "markdown", "Avante" },
+      },
+      ft = { "markdown", "Avante" },
+    },
+  },
+}
+EOF
+
+log "--- Setting up Anthropic API Key ---"
+BASHRC_FILE="$HOME_DIR/.bashrc"
+if ! grep -q "export AVANTE_ANTHROPIC_API_KEY" "$BASHRC_FILE" 2>/dev/null; then
+  log "Adding AVANTE_ANTHROPIC_API_KEY to .bashrc..."
+  echo "" >>"$BASHRC_FILE"
+  echo "# Anthropic API Key for Avante.nvim" >>"$BASHRC_FILE"
+  echo 'export AVANTE_ANTHROPIC_API_KEY="YOUR API KEY"' >>"$BASHRC_FILE"
+  log "✅ Added AVANTE_ANTHROPIC_API_KEY to .bashrc"
+  log "⚠️  IMPORTANT: Please edit ~/.bashrc and replace 'YOUR API KEY' with your actual Anthropic API key!"
+else
+  log "AVANTE_ANTHROPIC_API_KEY already exists in .bashrc. Skipping."
+fi
+log "Avante.nvim configuration written to $AVANTE_FILE"
+
 log "Adding LSP to config/init.lua and update options config..."
 CONFIG_DIR="$nvim_config_dir/lua/config"
 mkdir -p "$CONFIG_DIR"
