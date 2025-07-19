@@ -97,6 +97,8 @@ khaldoun_ssh_repos["khaldoun"]="git@github.com:khaldoun-xyz/khaldoun.git"
 khaldoun_ssh_repos["core_skills"]="git@github.com:khaldoun-xyz/core_skills.git"
 khaldoun_ssh_repos["albeyanat"]="git@github.com:khaldoun-xyz/albeyanat.git"
 khaldoun_ssh_repos["tanfidh"]="git@github.com:khaldoun-xyz/tanfidh.git"
+khaldoun_ssh_repos["tanfidh_mini"]="git@github.com:khaldoun-xyz/tanfidh_mini.git"
+khaldoun_ssh_repos["taothif"]="git@github.com:khaldoun-xyz/taothif.git"
 khaldoun_ssh_repos["sisu"]="git@github.com:khaldoun-xyz/sisu.git"
 
 for project in "${!khaldoun_ssh_repos[@]}"; do
@@ -121,6 +123,8 @@ alias terminal_llm='cd ~/programming/terminal_llm/src && . ~/virtualenvs/termina
 alias khaldoun='cd ~/programming/khaldoun && . ~/virtualenvs/khaldoun/bin/activate'
 alias albeyanat='cd ~/programming/albeyanat && . ~/virtualenvs/albeyanat/bin/activate'
 alias tanfidh='cd ~/programming/tanfidh && . ~/virtualenvs/tanfidh/bin/activate'
+alias tanfidh_mini='cd ~/programming/tanfidh_mini && . ~/virtualenvs/tanfidh_mini/bin/activate'
+alias taothif='cd ~/programming/taothif && . ~/virtualenvs/taothif/bin/activate'
 alias sisu='cd ~/programming/sisu && . ~/virtualenvs/sisu/bin/activate'
 EOF"
   log ".bashrc updated with khaldoun customization for user $ORIGINAL_USER."
