@@ -50,8 +50,6 @@ If you want to practice vim, ...
   gives you a good basic overview.
 - [this cheatsheet](https://vim.rtorr.com/) contains many useful commands.
 
-<<<<<<< Updated upstream
-=======
 #### Lazyvim config
 
 Your Lazyvim setup comes with the following ...
@@ -61,7 +59,6 @@ Your Lazyvim setup comes with the following ...
 - show hidden files (see plugins/snacks.lua)
 - auto-prettify json files (see config/autocmds.lua)
 
->>>>>>> Stashed changes
 #### Lazyvim Commands
 
 - start Lazyvim in your current directory by entering `n .` in your terminal
