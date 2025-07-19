@@ -282,6 +282,33 @@ tee -a "$CONFIG_DIR/options.lua" >/dev/null <<EOF
 -- Add any custom options here if needed
 EOF
 
+log "Adding autocmds.lua for JSON formatting..."
+AUTOCMDS_FILE="$CONFIG_DIR/autocmds.lua"
+tee "$AUTOCMDS_FILE" >/dev/null <<EOF
+vim.api.nvim_create_autocmd("BufReadPost", {
+  pattern = "*.json",
+  callback = function()
+    -- Only run if jq is available
+    if vim.fn.executable("jq") == 1 then
+      vim.cmd("%!jq .")
+    else
+      vim.notify("jq not found, skipping JSON formatting", vim.log.levels.WARN)
+    end
+  end,
+})
+EOF
+log "Autocmds configuration written to $AUTOCMDS_FILE"
+
+log "--- Installing jq ---"
+log "Checking if jq is available..."
+if ! command -v jq &> /dev/null; then
+  log "jq not found. Attempting to install..."
+  if command -v apt-get &> /dev/null; then
+    sudo apt-get update && sudo apt-get install -y jq || log "WARNING: Failed to install jq via apt-get."
+  else
+    log "WARNING: No supported package manager found. Please install jq manually: sudo apt-get install jq"
+  fi
+
 INIT_FILE="$nvim_config_dir/init.lua"
 mkdir -p "$(dirname "$INIT_FILE")"
 if [ ! -f "$INIT_FILE" ]; then
