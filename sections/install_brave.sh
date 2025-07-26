@@ -8,17 +8,26 @@ error_exit() {
 
 echo "Adding Brave Browser repository and installing Brave on Fedora."
 
-# Install dnf-plugins-core if not already installed (required for config-manager)
-echo "Ensuring dnf-plugins-core is installed..."
-sudo dnf install -y dnf-plugins-core || error_exit "Failed to install dnf-plugins-core."
-
 # Import Brave's signing key
 echo "Importing Brave Browser signing key..."
 sudo rpm --import https://brave-browser-rpm-release.s3.brave.com/brave-core.asc || error_exit "Failed to import Brave signing key."
 
-# Add Brave repository
+# Add Brave repository by creating the repo file manually
 echo "Adding Brave Browser repository..."
-sudo dnf config-manager --add-repo https://brave-browser-rpm-release.s3.brave.com/brave-browser.repo || error_exit "Failed to add Brave repository."
+sudo tee /etc/yum.repos.d/brave-browser.repo > /dev/null <<EOF
+[brave-browser]
+name=Brave Browser
+baseurl=https://brave-browser-rpm-release.s3.brave.com/
+enabled=1
+gpgcheck=1
+gpgkey=https://brave-browser-rpm-release.s3.brave.com/brave-core.asc
+EOF
+
+if [ $? -eq 0 ]; then
+  echo "Brave repository file created successfully."
+else
+  error_exit "Failed to create Brave repository file."
+fi
 
 # Update package list and install Brave
 echo "Updating package list..."
