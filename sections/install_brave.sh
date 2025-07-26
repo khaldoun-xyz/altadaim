@@ -8,6 +8,10 @@ error_exit() {
 
 echo "Adding Brave Browser repository and installing Brave on Fedora."
 
+# Install dnf-plugins-core if not already installed (required for config-manager)
+echo "Ensuring dnf-plugins-core is installed..."
+sudo dnf install -y dnf-plugins-core || error_exit "Failed to install dnf-plugins-core."
+
 # Import Brave's signing key
 echo "Importing Brave Browser signing key..."
 sudo rpm --import https://brave-browser-rpm-release.s3.brave.com/brave-core.asc || error_exit "Failed to import Brave signing key."
