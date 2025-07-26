@@ -121,8 +121,16 @@ main_install_flatpak_packages() {
     sudo -u "$ORIGINAL_USER" cargo install zellij || echo "Failed to install zellij via cargo"
   else
     echo "Cargo not found, trying alternative installation for zellij..."
-    # Download pre-built binary as fallback
-    ZELLIJ_VERSION="v0.39.2"  # Update this to latest version as needed
+    # Download pre-built binary as fallback - get latest version dynamically
+    echo "Getting latest zellij version..."
+    ZELLIJ_VERSION=$(curl -s https://api.github.com/repos/zellij-org/zellij/releases/latest | grep '"tag_name"' | cut -d'"' -f4)
+    
+    if [ -z "$ZELLIJ_VERSION" ]; then
+      echo "Failed to get latest zellij version, using fallback v0.39.2"
+      ZELLIJ_VERSION="v0.39.2"
+    fi    
+
+    echo "Installing zellij $ZELLIJ_VERSION ..."
     ZELLIJ_URL="https://github.com/zellij-org/zellij/releases/download/${ZELLIJ_VERSION}/zellij-x86_64-unknown-linux-musl.tar.gz"
     cd /tmp
     wget "$ZELLIJ_URL" -O zellij.tar.gz || echo "Failed to download zellij"
@@ -172,15 +180,35 @@ install_chromedriver() {
   # Try package manager first
   dnf install -y chromedriver 2>/dev/null || {
     echo "ChromeDriver not available via DNF, downloading manually..."
-    # Download latest chromedriver
-    CHROMEDRIVER_VERSION=$(curl -s "https://chromedriver.storage.googleapis.com/LATEST_RELEASE")
-    wget -O /tmp/chromedriver.zip "https://chromedriver.storage.googleapis.com/${CHROMEDRIVER_VERSION}/chromedriver_linux64.zip" || echo "Failed to download ChromeDriver"
-    unzip /tmp/chromedriver.zip -d /tmp/ || echo "Failed to extract ChromeDriver"
-    sudo mv /tmp/chromedriver /usr/local/bin/ || echo "Failed to install ChromeDriver"
+    # Use the new Chrome for Testing API
+    echo "Getting latest ChromeDriver version from Chrome for Testing API..."
+    CHROMEDRIVER_VERSION=$(curl -s "https://googlechromelabs.github.io/chrome-for-testing/LATEST_RELEASE_STABLE")
+    
+    if [ -z "$CHROMEDRIVER_VERSION" ]; then
+      echo "Failed to get latest ChromeDriver version, skipping installation"
+      return 1
+    fi
+    
+    echo "Downloading ChromeDriver version $CHROMEDRIVER_VERSION..."
+    CHROMEDRIVER_URL="https://storage.googleapis.com/chrome-for-testing-public/${CHROMEDRIVER_VERSION}/linux64/chromedriver-linux64.zip"
+    
+    wget -O /tmp/chromedriver.zip "$CHROMEDRIVER_URL" || {
+      echo "Failed to download ChromeDriver from new API, trying fallback..."
+      # Fallback to a known working version if the new API fails
+      wget -O /tmp/chromedriver.zip "https://storage.googleapis.com/chrome-for-testing-public/120.0.6099.109/linux64/chromedriver-linux64.zip" || {
+        echo "Failed to download ChromeDriver"
+        return 1
+      }
+    }
+    
+    unzip -q /tmp/chromedriver.zip -d /tmp/ || echo "Failed to extract ChromeDriver"
+    sudo mv /tmp/chromedriver-linux64/chromedriver /usr/local/bin/ || echo "Failed to install ChromeDriver"
     sudo chmod +x /usr/local/bin/chromedriver || echo "Failed to make ChromeDriver executable"
     rm -f /tmp/chromedriver.zip
+    rm -rf /tmp/chromedriver-linux64
   }
 }
+
 
 # Main execution
 main_install_dnf_packages "$@"
