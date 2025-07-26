@@ -15,11 +15,13 @@ BASHRC_MARKER="# --------------------------- ADDED BY ALTADAIM -----------------
 # Check if the block already exists
 if ! grep -q "$BASHRC_MARKER" "$BASHRC_PATH"; then
   cat <<'EOF' >>"$BASHRC_PATH"
+
 # --------------------------- ADDED BY ALTADAIM --------------------------------
 # show git branch in Terminal
 function parse_git_branch() {
   git branch 2>/dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/(\1)/'
 }
+
 RED="\[\033[01;31m\]"
 YELLOW="\[\033[01;33m\]"
 GREEN="\[\033[01;32m\]"
