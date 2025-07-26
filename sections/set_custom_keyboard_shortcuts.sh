@@ -60,10 +60,13 @@ cleaned="${existing#[}"
 cleaned="${cleaned%]}"
 
 # Check if shortcut already exists
-if [[ "$existing" == "[]" ]]; then
+if [[ "$existing" == "[]" ]] || [[ "$existing" == "@as []" ]]; then
   new_list="['$SHORTCUT_PATH']"
 elif [[ "$existing" != *"$SHORTCUT_PATH"* ]]; then
-  if [[ -z "$cleaned" ]]; then
+  # Remove the @as prefix and brackets, then rebuild
+  cleaned="${existing#*[}"
+  cleaned="${cleaned%]}"
+  if [[ -z "$cleaned" ]] || [[ "$cleaned" == " " ]]; then
     new_list="['$SHORTCUT_PATH']"
   else
     new_list="[$cleaned, '$SHORTCUT_PATH']"
@@ -74,9 +77,18 @@ else
 fi
 
 echo "Setting $SHORTCUT_NAME shortcut"
+echo "New list will be: $new_list"
 
-# Set the custom keybindings list
-gsettings set "$SCHEMA" custom-keybindings "$new_list" || error_exit "Failed to set custom keybindings list"
+# Set the custom keybindings list with proper array syntax
+gsettings set "$SCHEMA" custom-keybindings "$new_list" || {
+  echo "Failed with quoted syntax, trying alternative..."
+  # Try alternative syntax without outer quotes
+  gsettings set "$SCHEMA" custom-keybindings "['$SHORTCUT_PATH']" || {
+    echo "Trying with explicit array type..."
+    # Force the array type explicitly
+    gsettings set "$SCHEMA" custom-keybindings "['$SHORTCUT_PATH']" || error_exit "Failed to set custom keybindings list"
+  }
+}
 
 # Set individual shortcut properties
 gsettings set "${SCHEMA}.custom-keybinding:$SHORTCUT_PATH" name "$SHORTCUT_NAME" || error_exit "Failed to set shortcut name"
