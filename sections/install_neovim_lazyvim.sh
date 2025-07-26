@@ -87,6 +87,49 @@ return {
 EOF
 log "Snacks.nvim configuration written to $SNACKS_FILE"
 
+log "Adding LazyExtras plugins for language support ..."
+EXTRAS_FILE="$nvim_config_dir/lua/plugins/extras.lua"
+mkdir -p "$(dirname "$EXTRAS_FILE")"
+tee "$EXTRAS_FILE" >/dev/null <<EOF
+return {
+  { import = "lazyvim.plugins.extras.lang.python" },
+  { import = "lazyvim.plugins.extras.lang.markdown" },
+  { import = "lazyvim.plugins.extras.lang.docker" },
+  { import = "lazyvim.plugins.extras.lang.sql" },
+  { import = "lazyvim.plugins.extras.lang.yaml" },
+  { import = "lazyvim.plugins.extras.lang.json" },
+  { import = "lazyvim.plugins.extras.lang.terraform" },
+}
+EOF
+log "LazyExtras written to $EXTRAS_FILE"
+
+log "Adding Snacks.nvim configuration to show ignored files in tree viewer ..."
+SNACKS_FILE="$nvim_config_dir/lua/plugins/snacks.lua"
+mkdir -p "$(dirname "$SNACKS_FILE")"
+tee "$SNACKS_FILE" >/dev/null <<EOF
+return {
+  {
+    "folke/snacks.nvim",
+    opts = {
+      picker = {
+        -- Show both dotfiles and gitignored files in all pickers
+        hidden = true,
+        ignored = true,
+
+        -- Configure the tree explorer specifically
+        sources = {
+          explorer = {
+            hidden = true,
+            ignored = true,
+          },
+        },
+      },
+    },
+  },
+}
+EOF
+log "Snacks.nvim configuration written to $SNACKS_FILE"
+
 log "Adding Avante.nvim configuration ..."
 AVANTE_FILE="$nvim_config_dir/lua/plugins/avante.lua"
 mkdir -p "$(dirname "$AVANTE_FILE")"
