@@ -34,7 +34,17 @@ SCHEMA="org.gnome.settings-daemon.plugins.media-keys"
 CUSTOM_PATH="/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/"
 SHORTCUT_NAME="flameshot"
 SHORTCUT_PATH="${CUSTOM_PATH}${SHORTCUT_NAME}/"
-COMMAND="/usr/bin/flameshot gui"
+
+# Check session type and set appropriate command
+if [[ "${XDG_SESSION_TYPE:-}" == "wayland" ]]; then
+  echo "Detected Wayland session - using wrapper script approach"
+  COMMAND="sh -c 'env XDG_CURRENT_DESKTOP=GNOME flameshot gui'"
+  echo "Wayland command: $COMMAND"
+else
+  echo "Detected X11 session - using direct command"
+  COMMAND="/usr/bin/flameshot gui"
+fi
+
 BINDING="<Control><Super>p"
 
 echo "Configuring Flameshot screenshot shortcut: $BINDING"

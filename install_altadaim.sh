@@ -85,9 +85,6 @@ main() {
   log "--- Updating .bashrc with Aliases and Git Prompt ---"
   sudo -u "$ORIGINAL_USER" bash ./sections/update_bashrc.sh || error_exit "update_bashrc.sh failed."
 
-  log "--- Setting Up Git via SSH ---"
-  bash ./sections/set_up_git_ssh.sh || error_exit "set_up_git_ssh.sh failed"
-
   log "--- Setting custom keyboard shortcuts ---"
   ORIGINAL_UID=$(id -u "$ORIGINAL_USER")
   export DBUS_SESSION_BUS_ADDRESS="unix:path=/run/user/$ORIGINAL_UID/bus"
@@ -101,6 +98,9 @@ main() {
   else
     log "WARNING: Fedora-specific Brave installation script not found. Skipping Brave installation."
   fi
+
+  log "--- Setting Up Git via SSH ---"
+  bash ./sections/set_up_git_ssh.sh || error_exit "set_up_git_ssh.sh failed"
 
   log "--- Setup Complete! ---"
   log "Altadaim finished (with warnings if any)."
