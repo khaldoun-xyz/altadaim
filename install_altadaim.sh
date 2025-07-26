@@ -82,14 +82,6 @@ main() {
   log "--- Installing FiraCode Nerd Font ---"
   sudo -u "$ORIGINAL_USER" bash ./sections/install_fonts_alacritty.sh || error_exit "Font and terminal setup failed."
 
-  log "--- Installing Brave Browser ---"
-  # Brave installation on Fedora is different from Ubuntu
-  if [ -f ./sections/install_brave.sh ]; then
-    bash ./sections/install_brave.sh || error_exit "install_brave.sh failed"
-  else
-    log "WARNING: Fedora-specific Brave installation script not found. Skipping Brave installation."
-  fi
-
   log "--- Updating .bashrc with Aliases and Git Prompt ---"
   sudo -u "$ORIGINAL_USER" bash ./sections/update_bashrc.sh || error_exit "update_bashrc.sh failed."
 
@@ -101,6 +93,14 @@ main() {
   export DBUS_SESSION_BUS_ADDRESS="unix:path=/run/user/$ORIGINAL_UID/bus"
   echo "Running keyboard shortcut setup as $ORIGINAL_USER with uid $ORIGINAL_UID and dbus session bus address $DBUS_SESSION_BUS_ADDRESS"
   sudo -u "$ORIGINAL_USER" DBUS_SESSION_BUS_ADDRESS=$DBUS_SESSION_BUS_ADDRESS bash ./sections/set_custom_keyboard_shortcuts.sh || error_exit "set_custom_keyboard_shortcuts.sh failed"
+
+  log "--- Installing Brave Browser ---"
+  # Brave installation on Fedora is different from Ubuntu
+  if [ -f ./sections/install_brave.sh ]; then
+    bash ./sections/install_brave.sh || error_exit "install_brave.sh failed"
+  else
+    log "WARNING: Fedora-specific Brave installation script not found. Skipping Brave installation."
+  fi
 
   log "--- Setup Complete! ---"
   log "Altadaim finished (with warnings if any)."
