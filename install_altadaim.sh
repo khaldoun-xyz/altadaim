@@ -6,7 +6,7 @@ set -u
 # Exit if any command in a pipeline fails.
 set -o pipefail
 
-LOG_FILE="$HOME/ubuntu_setup_$(date +%Y%m%d_%H%M%S).log"
+LOG_FILE="$HOME/fedora_setup_$(date +%Y%m%d_%H%M%S).log"
 log() {
   echo "$(date +'%Y-%m-%d %H:%M:%S') - $1" | tee -a "$LOG_FILE"
 }
@@ -33,11 +33,16 @@ cleanup() {
 }
 trap cleanup EXIT
 
-UBUNTU_VERSION=$(lsb_release -rs)
-log "Detected Ubuntu Version: $UBUNTU_VERSION"
+# Detect Fedora version instead of Ubuntu
+if [ -f /etc/fedora-release ]; then
+  FEDORA_VERSION=$(grep -oE '[0-9]+' /etc/fedora-release | head -1)
+  log "Detected Fedora Version: $FEDORA_VERSION"
+else
+  error_exit "This script is designed for Fedora, but /etc/fedora-release was not found."
+fi
 
 main() {
-  log "Starting Altadaim's installer script."
+  log "Starting Altadaim's installer script (Fedora version)."
   log "This script will install various development tools and configure your system."
 
   log "--- Get necessary scripts ---"
@@ -53,17 +58,20 @@ main() {
 
   log "--- System Update and Upgrade ---"
   log "Updating and upgrading system packages. This may take some time."
-  echo 'grub-pc grub-pc/install_devices_empty boolean true' | sudo debconf-set-selections
-  sudo apt update -y || error_exit "APT update failed."
-  sudo apt upgrade -y || error_exit "APT upgrade failed."
-  sudo apt dist-upgrade || error_exit "APT dist-upgrade failed."
+  # Use DNF instead of APT for Fedora
+  sudo dnf check-update -y || true  # check-update returns 100 if updates are available, which is normal
+  sudo dnf upgrade -y || error_exit "DNF upgrade failed."
   log "✅ System packages updated and upgraded."
 
-  log "--- Installing apt/snap packages ---"
-  bash ./sections/install_apt_snap_packages.sh || error_exit "install_apt_snap_packages.sh failed"
-
-  log "--- Installing Aider ---"
-  sudo -u "$ORIGINAL_USER" bash ./sections/install_aider.sh || error_exit "install_aider.sh failed"
+  log "--- Installing packages ---"
+  # You'll need to create Fedora-specific package installation scripts
+  # or modify the existing ones to use dnf instead of apt
+  if [ -f ./sections/install_fedora_packages.sh ]; then
+    bash ./sections/install_fedora_packages.sh || error_exit "install_fedora_packages.sh failed"
+  else
+    log "WARNING: Fedora-specific package installation script not found. Skipping package installation."
+    log "You may need to manually install required packages or create a Fedora-compatible script."
+  fi
 
   log "--- Installing & configuring Neovim & LazyVim (includes Node.js) ---"
   sudo -u "$ORIGINAL_USER" bash ./sections/install_neovim_lazyvim.sh || error_exit "install_neovim_lazyvim.sh failed"
@@ -75,7 +83,12 @@ main() {
   sudo -u "$ORIGINAL_USER" bash ./sections/install_fonts_alacritty.sh || error_exit "Font and terminal setup failed."
 
   log "--- Installing Brave Browser ---"
-  bash ./sections/install_brave.sh || error_exit "install_brave.sh failed"
+  # Brave installation on Fedora is different from Ubuntu
+  if [ -f ./sections/install_brave.sh ]; then
+    bash ./sections/install_brave.sh || error_exit "install_brave.sh failed"
+  else
+    log "WARNING: Fedora-specific Brave installation script not found. Skipping Brave installation."
+  fi
 
   log "--- Updating .bashrc with Aliases and Git Prompt ---"
   sudo -u "$ORIGINAL_USER" bash ./sections/update_bashrc.sh || error_exit "update_bashrc.sh failed."

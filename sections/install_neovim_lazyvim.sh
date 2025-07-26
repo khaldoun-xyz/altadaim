@@ -28,6 +28,12 @@ else
   log "Neovim AppImage already exists. Skipping download."
 fi
 
+# Create a symlink or add to PATH for easier access
+if [ ! -L "/usr/local/bin/nvim" ] && [ ! -f "/usr/local/bin/nvim" ]; then
+  log "Creating symlink for nvim command..."
+  sudo ln -sf "$nvim_appimage" /usr/local/bin/nvim || log "WARNING: Failed to create nvim symlink. You may need to run the AppImage directly."
+fi
+
 log "Setting up LazyVim configuration."
 
 nvim_config_dir="$HOME_DIR/.config/nvim"
@@ -80,46 +86,6 @@ return {
 }
 EOF
 log "Snacks.nvim configuration written to $SNACKS_FILE"
-
-#!/usr/bin/env bash
-
-# Exit on errors, unset vars, or failed pipes
-set -euo pipefail
-
-# Logging
-LOG_FILE="${HOME}/install_neovim_lazyvim_$(date +%Y%m%d_%H%M%S).log"
-log() {
-  echo "$(date +'%Y-%m-%d %H:%M:%S') - $1" | tee -a "$LOG_FILE"
-}
-error_exit() {
-  log "ERROR: $1"
-  exit 1
-}
-
-# User running the script (non-sudo)
-ORIGINAL_USER="${USER}"
-HOME_DIR="/home/$ORIGINAL_USER"
-
-log "Installing Neovim AppImage for user $ORIGINAL_USER."
-
-nvim_appimage="$HOME_DIR/nvim-linux-x86_64.appimage"
-if [ ! -f "$nvim_appimage" ]; then
-  curl -fsSLo "$nvim_appimage" https://github.com/neovim/neovim/releases/latest/download/nvim-linux-x86_64.appimage || error_exit "Failed to download Neovim AppImage."
-  chmod u+x "$nvim_appimage" || error_exit "Failed to make Neovim AppImage executable."
-  log "Neovim AppImage downloaded and made executable."
-else
-  log "Neovim AppImage already exists. Skipping download."
-fi
-
-log "Setting up LazyVim configuration."
-
-nvim_config_dir="$HOME_DIR/.config/nvim"
-if [ ! -d "$nvim_config_dir" ]; then
-  git clone https://github.com/LazyVim/starter "$nvim_config_dir" || error_exit "Failed to clone LazyVim starter config."
-  rm -rf "$nvim_config_dir/.git" || log "WARNING: Failed to remove .git from LazyVim config. Manual cleanup might be needed."
-else
-  log "LazyVim config already exists. Skipping clone."
-fi
 
 log "Adding LazyExtras plugins for language support ..."
 EXTRAS_FILE="$nvim_config_dir/lua/plugins/extras.lua"
@@ -302,16 +268,13 @@ log "Autocmds configuration written to $AUTOCMDS_FILE"
 log "--- Installing jq ---"
 log "Checking if jq is available..."
 if ! command -v jq &>/dev/null; then
-  log "jq not found. Attempting to install..."
-  if command -v apt-get &>/dev/null; then
-    sudo apt-get update && sudo apt-get install -y jq || log "WARNING: Failed to install jq via apt-get."
-  else
-    log "WARNING: No supported package manager found. Please install jq manually: sudo apt-get install jq"
-  fi
+  log "jq not found. Installing via DNF..."
+  sudo dnf install -y jq || log "WARNING: Failed to install jq via dnf."
+  
   if command -v jq &>/dev/null; then
     log "✅ jq successfully installed: $(jq --version)"
   else
-    log "⚠️  jq installation may have failed. JSON auto-formatting will be disabled."
+    log "⚠️  jq installation failed. JSON auto-formatting will be disabled."
   fi
 else
   log "✅ jq is already available: $(jq --version)"
@@ -367,4 +330,32 @@ bash -c "
   npm install -g markdownlint-cli2
 " || log "WARNING: Failed to complete Node.js setup."
 
+# Install additional development dependencies for Fedora
+log "--- Installing Fedora development dependencies ---"
+log "Installing build tools and development packages required for Neovim and Node.js..."
+
+# Essential packages for Fedora development environment
+FEDORA_DEV_PACKAGES=(
+  "make"
+  "cmake"
+  "gcc-c++"
+  "kernel-devel"
+  "fuse"
+  "fuse-libs"
+)
+
+for package in "${FEDORA_DEV_PACKAGES[@]}"; do
+  log "Installing $package..."
+  sudo dnf install -y "$package" || log "WARNING: Failed to install $package"
+done
+
+# Make sure AppImage can run (FUSE requirement)
+log "Ensuring FUSE is properly configured for AppImages..."
+if ! groups "$USER" | grep -q fuse; then
+  log "Adding user to fuse group..."
+  sudo usermod -aG fuse "$USER" || log "WARNING: Failed to add user to fuse group"
+  log "⚠️  Note: You may need to log out and back in for FUSE group membership to take effect"
+fi
+
 log "✅ Node.js and markdownlint-cli2 setup complete."
+log "✅ Fedora-specific development dependencies installed."
