@@ -84,8 +84,8 @@ main() {
 
   log "--- Installing Brave Browser ---"
   # Brave installation on Fedora is different from Ubuntu
-  if [ -f ./sections/install_brave_fedora.sh ]; then
-    bash ./sections/install_brave_fedora.sh || error_exit "install_brave_fedora.sh failed"
+  if [ -f ./sections/install_brave.sh ]; then
+    bash ./sections/install_brave.sh || error_exit "install_brave.sh failed"
   else
     log "WARNING: Fedora-specific Brave installation script not found. Skipping Brave installation."
   fi
