@@ -35,75 +35,56 @@ CUSTOM_PATH="/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/"
 SHORTCUT_NAME="flameshot"
 SHORTCUT_PATH="${CUSTOM_PATH}${SHORTCUT_NAME}/"
 
-# Check session type and set appropriate command
-if [[ "${XDG_SESSION_TYPE:-}" == "wayland" ]]; then
-  echo "Detected Wayland session - using wrapper script approach"
-  COMMAND="sh -c 'env XDG_CURRENT_DESKTOP=GNOME flameshot gui'"
-  echo "Wayland command: $COMMAND"
-else
-  echo "Detected X11 session - using direct command"
-  COMMAND="/usr/bin/flameshot gui"
-fi
-
+# Use simple direct command (works better than complex wrappers)
+# Create a wrapper script since direct commands don't work reliably
+WRAPPER_SCRIPT="/usr/local/bin/flameshot-shortcut"
+COMMAND="$WRAPPER_SCRIPT"
 BINDING="<Control><Super>p"
 
 echo "Configuring Flameshot screenshot shortcut: $BINDING"
+echo "Creating wrapper script at: $WRAPPER_SCRIPT"
 
-# Verify flameshot is installed in the expected location
-if [ ! -f "/usr/bin/flameshot" ]; then
-  # Try to find flameshot in other common locations
-  if command -v flameshot &>/dev/null; then
-    COMMAND=$(which flameshot)
-    COMMAND="$COMMAND gui"
-    echo "Found flameshot at: $COMMAND"
-  else
-    error_exit "flameshot binary not found. Please install flameshot first."
-  fi
+# Create the wrapper script that actually works
+sudo tee "$WRAPPER_SCRIPT" > /dev/null << 'EOF'
+#!/bin/bash
+flameshot gui
+EOF
+
+sudo chmod +x "$WRAPPER_SCRIPT"
+echo "Wrapper script created and made executable."
+
+# Verify flameshot is installed
+if ! command -v flameshot &>/dev/null; then
+  error_exit "flameshot binary not found. Please install flameshot first."
 fi
 
-echo "List of existing shortcuts:"
-existing=$(gsettings get "$SCHEMA" custom-keybindings 2>/dev/null || echo "[]")
-echo "$existing"
-
-# Safely remove brackets using shell expansion
-cleaned="${existing#[}"
-cleaned="${cleaned%]}"
-
-# Check if shortcut already exists
-if [[ "$existing" == "[]" ]] || [[ "$existing" == "@as []" ]]; then
-  new_list="['$SHORTCUT_PATH']"
-elif [[ "$existing" != *"$SHORTCUT_PATH"* ]]; then
-  # Remove the @as prefix and brackets, then rebuild
-  cleaned="${existing#*[}"
-  cleaned="${cleaned%]}"
-  if [[ -z "$cleaned" ]] || [[ "$cleaned" == " " ]]; then
-    new_list="['$SHORTCUT_PATH']"
-  else
-    new_list="[$cleaned, '$SHORTCUT_PATH']"
-  fi
-else
-  new_list="$existing"
-  echo "Shortcut already exists, updating configuration..."
-fi
+# Always clear and recreate the shortcut
+echo "Clearing existing shortcuts and creating fresh..."
+gsettings set "$SCHEMA" custom-keybindings "[]"
+new_list="['$SHORTCUT_PATH']"
 
 echo "Setting $SHORTCUT_NAME shortcut"
 echo "New list will be: $new_list"
 
-# Set the custom keybindings list with proper array syntax
-gsettings set "$SCHEMA" custom-keybindings "$new_list" || {
-  echo "Failed with quoted syntax, trying alternative..."
-  # Try alternative syntax without outer quotes
-  gsettings set "$SCHEMA" custom-keybindings "['$SHORTCUT_PATH']" || {
-    echo "Trying with explicit array type..."
-    # Force the array type explicitly
-    gsettings set "$SCHEMA" custom-keybindings "['$SHORTCUT_PATH']" || error_exit "Failed to set custom keybindings list"
-  }
-}
+# Set the custom keybindings list
+gsettings set "$SCHEMA" custom-keybindings "$new_list" || error_exit "Failed to set custom keybindings list"
 
 # Set individual shortcut properties
 gsettings set "${SCHEMA}.custom-keybinding:$SHORTCUT_PATH" name "$SHORTCUT_NAME" || error_exit "Failed to set shortcut name"
 gsettings set "${SCHEMA}.custom-keybinding:$SHORTCUT_PATH" command "$COMMAND" || error_exit "Failed to set shortcut command"
 gsettings set "${SCHEMA}.custom-keybinding:$SHORTCUT_PATH" binding "$BINDING" || error_exit "Failed to set shortcut binding"
+
+# Ensure F11 fullscreen toggle is properly set for terminals
+echo "Setting F11 as fullscreen toggle..."
+gsettings set org.gnome.desktop.wm.keybindings toggle-fullscreen "['F11']" || echo "WARNING: Failed to set F11 fullscreen binding"
+
+# Force GNOME to refresh the shortcuts
+echo "Refreshing GNOME settings..."
+gsettings get "$SCHEMA" custom-keybindings > /dev/null
+
+# Test flameshot to initialize it properly
+echo "Initializing flameshot..."
+timeout 2s flameshot gui &>/dev/null || true
 
 # Verify the configuration
 echo "Verifying shortcut configuration..."
@@ -117,6 +98,7 @@ gsettings get "$SCHEMA" custom-keybindings
 
 echo "✅ Custom shortcuts set up successfully."
 echo "You can now use Ctrl+Super+P to take screenshots with Flameshot."
+echo "✅ F11 is now set to toggle fullscreen in terminals and applications."
 
 # Test if flameshot is working (optional)
 echo "Testing Flameshot installation..."

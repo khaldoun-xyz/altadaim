@@ -3,16 +3,18 @@
 This manual draws inspiration from - among others -
 Omakub's [hotkeys section](https://manual.omakub.org/1/read/29/hotkeys).
 
-## Linux
+## Your Operating System
 
 Properly navigating your operating system is already a productivity boost.
+We currently rely on Fedora. Here are key commands:
 
 - open search bar: `super`
-- maximise current window: `super m`
-- move current window to left/right screen section: `ctrl super arrow left/right`
-- move to next workspace: `ctrl super arrow down`
-- move app to next workspace: `shift super arrow down`
-- activate full-screen mode in app: `f11`
+- maximise current window: `super arrow up`
+- move current window to left/right screen section: `super arrow left/right`
+- create an editable Flameshot screenshot: `ctrl super + p`
+- move to next workspace: `super alt arrow + left/right`
+- move app to next workspace: `shift super alt arrow + left/right`
+- activate full-screen mode: `f11`
 - in terminal, start Neovim with current directory: `n .`
 
 ## Alacritty (your terminal)
@@ -34,9 +36,10 @@ Zellij lets you easily manipulate your terminal windows.
 
 - open Zellij by entering `zellij` in your terminal
 - new vertical/horizontal pane: `ctrl p + r/d`
+- enter full screen in current pane: `ctrl p + f`
 - increase/decrease current pane size: `alt +/-`
 - jump to the next pane (also includes tabs): `alt arrow keys`
-- open a floating pane: `alt f`
+- open a floating pane: `ctrp p + w`
 - create a new tab: `ctrl t + n`
 
 ### Lazyvim
@@ -169,56 +172,3 @@ If the docker runs on one system, it will run on another.
 - `docker ps`: see a list of running docker containers
 - `docker exec -it INITIAL_DIGITS_OF_CONTAINER sh`:
   jump inside a container & get terminal access
-
-## Github Actions
-
-For Continuous Delivery, we rely on Github Actions.
-As one example, check [Lugha's deploy script](https://github.com/khaldoun-xyz/lugha/blob/main/.github/workflows/deploy.yml).
-Whenever we merge anything into our `main` branch, the `main` branch
-is automatically deployed on our Digital Ocean droplet.
-
-## Power Point
-
-When used properly, Microsoft Power Point is a useful tool for concept work
-and to quickly visualise what you have in mind.
-
-### Thoughts on Power Point presentations
-
-- never forget: the only reason to create a presentation is *to sell*
-- if it is unclear what the presentation is for, make it clear or cancel the presentation
-- before creating slides, write down the key messages of your presentation
-  (no more than 3); if they aren't clear, make them clear or cancel the presentation
-- for each slide, write down its key message;
-  if the key message isn't clear, make it clear or remove the slide
-- move everything that doesn't support the key messages into the backup,
-  the last section of the presentation
-- whatever the time frame of your presentation, plan ~1/3 for the actual presentation
-  and ~2/3 for discussion
-
-### Power Point shortcuts
-
-[This Youtube video](https://www.youtube.com/watch?v=-Ab-HYN0WUo) is a good primer
-on the power of shortcuts in Power Point.
-
-- `alt` = *the one key to rule them all:* show ribbon key bindings
-- `ctrl + shift + ./,` = increase/decrease font size
-- `ctrl + shift + g/h` = group/ungroup selection
-- `ctrl + shift + c/v` = copy/paste formatting
-- `ctrl + backspace` = delete entire word
-- `ctrl + mouse wheel` = zoom
-- `shift + arrow keys` = increase/decrease box size
-- `ctrl + mouse movement` = duplicate box
-- `ctrl + shift + mouse movement` = duplicate box & move it in straight line
-- `ctrl + alt + m` = create new comment
-- `F4` = repeat last command
-- `alt` = activate & show quick travel keys
-
-## Plotting
-
-Great graphs help understand the underlying data. [This Youtube video](https://www.youtube.com/watch?v=hVimVzgtD6w&t=57s)
-is very educational thanks to graphs.
-
-### Thoughts on great graphs
-
-- good graphs provide easy-to-understand answers to simple qs;
-  great graphs provide easy-to-understand answers to complex qs
