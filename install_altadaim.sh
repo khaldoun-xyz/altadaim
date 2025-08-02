@@ -99,6 +99,9 @@ main() {
     log "WARNING: Fedora-specific Brave installation script not found. Skipping Brave installation."
   fi
 
+  log "--- Installing GNOME Timer Extension ---"
+  sudo -u "$ORIGINAL_USER" bash ./sections/install_gnome_timer.sh || error_exit "install_gnome_timer.sh failed"
+
   log "--- Setting Up Git via SSH ---"
   bash ./sections/set_up_git_ssh.sh || error_exit "set_up_git_ssh.sh failed"
 
