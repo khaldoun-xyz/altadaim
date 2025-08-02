@@ -24,5 +24,5 @@
 
 - if your wifi is not available, follow these steps:
   <https://askubuntu.com/questions/55868/installing-broadcom-wireless-drivers>
-- if your webcam is not available, follow the Debian steps:
-  <https://github.com/patjak/facetimehd/wiki/Installation#get-started-on-debian>
+- if your webcam is not available, follow these steps:
+  <https://github.com/patjak/facetimehd/wiki/Installation>
