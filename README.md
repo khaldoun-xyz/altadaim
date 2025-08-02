@@ -16,6 +16,21 @@ Then copy this command and run it in your terminal:
 wget https://raw.githubusercontent.com/khaldoun-xyz/altadaim/main/install_altadaim.sh && sudo bash install_altadaim.sh
 ```
 
+## How it works
+
+If you run the script, Altadaim will do the rest by itself.
+Here and there, you are asked for user input (e.g. to save your ssh key to Github).
+In the end, you'll see instructions what to do next to finish the install.
+
+### Logging
+
+*Logging is not properly set up yet.*
+
+The final version of Altadaim will create a folder `~/altadaim-logs`.
+In this folder, the various config files will create a log file
+with the same name as the original file with a creation timestamp in the end
+(e.g. `install_altadaim-<TIMESTAMP>.log`).
+
 ## What you get with Altadaim
 
 ### Your Operating System: Fedora
