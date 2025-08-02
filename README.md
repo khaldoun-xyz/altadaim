@@ -79,7 +79,7 @@ Zellij lets you easily manipulate your terminal windows.
 - create a new pane to the side/below: `ctrl p + r/d`
 - increase/decrease the current pane size: `alt +/-`
 - change focus to the next pane: `alt arrow keys`
-- open a floating pane: `ctrp p + w`
+- open a floating pane: `ctrl p + w`
 - create a new tab: `ctrl t + n`
 
 #### Lazyvim
