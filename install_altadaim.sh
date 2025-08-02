@@ -59,7 +59,7 @@ main() {
   log "--- System Update and Upgrade ---"
   log "Updating and upgrading system packages. This may take some time."
   # Use DNF instead of APT for Fedora
-  sudo dnf check-update -y || true  # check-update returns 100 if updates are available, which is normal
+  sudo dnf check-update -y || true # check-update returns 100 if updates are available, which is normal
   sudo dnf upgrade -y || error_exit "DNF upgrade failed."
   log "✅ System packages updated and upgraded."
 
@@ -72,6 +72,9 @@ main() {
     log "WARNING: Fedora-specific package installation script not found. Skipping package installation."
     log "You may need to manually install required packages or create a Fedora-compatible script."
   fi
+
+  log "--- Installing VS Code ---"
+  bash ./sections/install_vscode.sh || error_exit "install_vscode.sh failed"
 
   log "--- Installing & configuring Neovim & LazyVim (includes Node.js) ---"
   sudo -u "$ORIGINAL_USER" bash ./sections/install_neovim_lazyvim.sh || error_exit "install_neovim_lazyvim.sh failed"

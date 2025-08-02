@@ -47,35 +47,35 @@ main_install_dnf_packages() {
   dnf config-manager --add-repo https://download.docker.com/linux/fedora/docker-ce.repo || echo "Docker repository might already be added"
 
   CORE_DNF_PACKAGES=(
-    "flatpak"                # Fedora's app distribution system (similar to Snap)
-    "gthumb"                 # Image viewer
-    "python3-pip"            # Python package manager
-    "postgresql"             # Database
-    "postgresql-server"      # PostgreSQL server
-    "sqlite"                 # SQLite database
-    "tmux"                   # Terminal multiplexer
-    "docker-compose"         # Docker compose
-    "docker-ce"              # Docker Community Edition
-    "alacritty"              # Terminal emulator
-    "htop"                   # Process viewer
-    "ripgrep"                # Fast text search
-    "flameshot"              # Screenshot tool
-    "chromium"               # Chromium browser
-    "npm"                    # Node package manager
-    "python3-virtualenv"     # Virtual environments
-    "curl"                   # Download tool
-    "wget"                   # Download tool
-    "unzip"                  # Archive extraction
-    "pipx"                   # Python app installer
-    "libffi-devel"           # Development headers for libffi
-    "postgresql-devel"       # PostgreSQL development headers
-    "dbus-x11"               # D-Bus X11 support
-    "git"                    # Version control
-    "gcc"                    # Compiler (often needed for Python packages)
-    "python3-devel"          # Python development headers
-    "rust"                   # Rust compiler (for zellij)
-    "cargo"                  # Rust package manager
-    "dnf-plugins-core"       # Required for adding Docker repository
+    "flatpak"            # Fedora's app distribution system (similar to Snap)
+    "gthumb"             # Image viewer
+    "python3-pip"        # Python package manager
+    "postgresql"         # Database
+    "postgresql-server"  # PostgreSQL server
+    "sqlite"             # SQLite database
+    "tmux"               # Terminal multiplexer
+    "docker-compose"     # Docker compose
+    "docker-ce"          # Docker Community Edition
+    "alacritty"          # Terminal emulator
+    "htop"               # Process viewer
+    "ripgrep"            # Fast text search
+    "flameshot"          # Screenshot tool
+    "chromium"           # Chromium browser
+    "npm"                # Node package manager
+    "python3-virtualenv" # Virtual environments
+    "curl"               # Download tool
+    "wget"               # Download tool
+    "unzip"              # Archive extraction
+    "pipx"               # Python app installer
+    "libffi-devel"       # Development headers for libffi
+    "postgresql-devel"   # PostgreSQL development headers
+    "dbus-x11"           # D-Bus X11 support
+    "git"                # Version control
+    "gcc"                # Compiler (often needed for Python packages)
+    "python3-devel"      # Python development headers
+    "rust"               # Rust compiler (for zellij)
+    "cargo"              # Rust package manager
+    "dnf-plugins-core"   # Required for adding Docker repository
   )
 
   # Try to install packages, but don't fail if some don't exist
@@ -92,29 +92,6 @@ setup_flatpak() {
 }
 
 main_install_flatpak_packages() {
-  # Install Flatpak applications (equivalents to the Snap packages)
-  install_flatpak_package "com.visualstudio.code"  # VS Code
-  
-  # Wait a moment for VS Code to be properly installed
-  sleep 2
-  
-  # Configure VS Code extensions (try both native and flatpak methods)
-  echo "Installing VS Code extensions..."
-  
-  # Try flatpak method first
-  sudo -u "$ORIGINAL_USER" flatpak run com.visualstudio.code --install-extension eamodio.gitlens 2>/dev/null || \
-  # Fallback to direct code command if flatpak doesn't work
-  sudo -u "$ORIGINAL_USER" code --install-extension eamodio.gitlens 2>/dev/null || \
-  echo "GitLens extension installation failed"
-  
-  sudo -u "$ORIGINAL_USER" flatpak run com.visualstudio.code --install-extension ms-python.python 2>/dev/null || \
-  sudo -u "$ORIGINAL_USER" code --install-extension ms-python.python 2>/dev/null || \
-  echo "Python extension installation failed"
-  
-  sudo -u "$ORIGINAL_USER" flatpak run com.visualstudio.code --install-extension charliermarsh.ruff 2>/dev/null || \
-  sudo -u "$ORIGINAL_USER" code --install-extension charliermarsh.ruff 2>/dev/null || \
-  echo "Ruff extension installation failed"
-  
   # Install zellij via cargo (now that rust/cargo should be installed)
   echo "Installing zellij..."
   if command -v cargo >/dev/null 2>&1; then
@@ -124,11 +101,11 @@ main_install_flatpak_packages() {
     # Download pre-built binary as fallback - get latest version dynamically
     echo "Getting latest zellij version..."
     ZELLIJ_VERSION=$(curl -s https://api.github.com/repos/zellij-org/zellij/releases/latest | grep '"tag_name"' | cut -d'"' -f4)
-    
+
     if [ -z "$ZELLIJ_VERSION" ]; then
       echo "Failed to get latest zellij version, using fallback v0.39.2"
       ZELLIJ_VERSION="v0.39.2"
-    fi    
+    fi
 
     echo "Installing zellij $ZELLIJ_VERSION ..."
     ZELLIJ_URL="https://github.com/zellij-org/zellij/releases/download/${ZELLIJ_VERSION}/zellij-x86_64-unknown-linux-musl.tar.gz"
@@ -143,20 +120,20 @@ main_install_flatpak_packages() {
 
 setup_docker() {
   echo "Setting up Docker..."
-  
+
   # Stop and disable Podman if it's running (to avoid conflicts)
   systemctl stop podman || echo "Podman was not running"
   systemctl disable podman || echo "Podman was not enabled"
   sudo -u "$ORIGINAL_USER" systemctl --user stop podman.socket || echo "User podman socket was not running"
   sudo -u "$ORIGINAL_USER" systemctl --user disable podman.socket || echo "User podman socket was not enabled"
-  
+
   # Start and enable Docker service
   systemctl start docker || echo "Failed to start Docker"
   systemctl enable docker || echo "Failed to enable Docker"
-  
+
   # Add user to docker group
   usermod -aG docker "$ORIGINAL_USER" || echo "WARNING: Failed to add user $ORIGINAL_USER to docker group"
-  
+
   echo "Docker setup complete. Note: You may need to log out and back in for group changes to take effect."
 }
 
@@ -183,15 +160,15 @@ install_chromedriver() {
     # Use the new Chrome for Testing API
     echo "Getting latest ChromeDriver version from Chrome for Testing API..."
     CHROMEDRIVER_VERSION=$(curl -s "https://googlechromelabs.github.io/chrome-for-testing/LATEST_RELEASE_STABLE")
-    
+
     if [ -z "$CHROMEDRIVER_VERSION" ]; then
       echo "Failed to get latest ChromeDriver version, skipping installation"
       return 1
     fi
-    
+
     echo "Downloading ChromeDriver version $CHROMEDRIVER_VERSION..."
     CHROMEDRIVER_URL="https://storage.googleapis.com/chrome-for-testing-public/${CHROMEDRIVER_VERSION}/linux64/chromedriver-linux64.zip"
-    
+
     wget -O /tmp/chromedriver.zip "$CHROMEDRIVER_URL" || {
       echo "Failed to download ChromeDriver from new API, trying fallback..."
       # Fallback to a known working version if the new API fails
@@ -200,7 +177,7 @@ install_chromedriver() {
         return 1
       }
     }
-    
+
     unzip -q /tmp/chromedriver.zip -d /tmp/ || echo "Failed to extract ChromeDriver"
     sudo mv /tmp/chromedriver-linux64/chromedriver /usr/local/bin/ || echo "Failed to install ChromeDriver"
     sudo chmod +x /usr/local/bin/chromedriver || echo "Failed to make ChromeDriver executable"
@@ -208,7 +185,6 @@ install_chromedriver() {
     rm -rf /tmp/chromedriver-linux64
   }
 }
-
 
 # Main execution
 main_install_dnf_packages "$@"
