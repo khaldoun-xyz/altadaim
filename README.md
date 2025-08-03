@@ -124,6 +124,16 @@ Your Lazyvim setup comes with the following ...
 - search all files: `space + s + g`
 - open lazy git: `space + g + g`
 
+##### Avante in Lazyvim
+
+[avante.nvim](https://github.com/yetone/avante.nvim) is a Neovim plugin
+designed to emulate the behaviour of the Cursor AI IDE.
+Here is a [full list of key bindings](https://github.com/yetone/avante.nvim?tab=readme-ov-file#key-bindings).
+
+- open/close the AI sidebar with the existing history: `space a a`
+- open a new AI sidebar (resets history): `space a n`
+- add new file to AI sidebar: tab to file section and press `@`
+
 #### Psql
 
 Psql is a terminal-based frontend to a Postgresql database.
