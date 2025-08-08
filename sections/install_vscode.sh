@@ -114,6 +114,8 @@ extensions=(
   "eamodio.gitlens"
   "ms-python.python"
   "charliermarsh.ruff"
+  "Meezilla.json"
+  "mechatroner.rainbow-csv"
 )
 
 # Install each extension
@@ -121,4 +123,57 @@ for extension in "${extensions[@]}"; do
   install_vscode_extension "$extension"
 done
 
+# Create a sample JSON file with schema for color themes
+echo "Creating sample JSON configuration files..."
+su - "$ORIGINAL_USER" -c "
+  mkdir -p ~/.vscode/themes
+  cat > ~/.vscode/themes/sample-theme.json << 'EOF'
+{
+  \"\$schema\": \"vscode://schemas/color-theme\",
+  \"type\": \"hcDark\",
+  \"name\": \"Sample High Contrast Dark Theme\",
+  \"colors\": {
+    \"editor.background\": \"#000000\",
+    \"editor.foreground\": \"#FFFFFF\",
+    \"activityBar.background\": \"#000000\",
+    \"activityBar.foreground\": \"#FFFFFF\"
+  },
+  \"tokenColors\": [
+    {
+      \"scope\": \"comment\",
+      \"settings\": {
+        \"foreground\": \"#7CA668\",
+        \"fontStyle\": \"italic\"
+      }
+    }
+  ]
+}
+EOF
+"
+
+# Configure VS Code settings for JSON formatting
+echo "Configuring VS Code settings for JSON formatting..."
+su - "$ORIGINAL_USER" -c "
+  mkdir -p ~/.config/Code/User
+  cat > ~/.config/Code/User/settings.json << 'EOF'
+{
+  \"json.schemas\": [
+    {
+      \"fileMatch\": [\"*theme*.json\"],
+      \"url\": \"vscode://schemas/color-theme\"
+    }
+  ],
+  \"editor.formatOnSave\": true,
+  \"editor.defaultFormatter\": \"esbenp.prettier-vscode\",
+  \"[json]\": {
+    \"editor.defaultFormatter\": \"ms-vscode.vscode-json\"
+  },
+  \"json.format.enable\": true,
+  \"prettier.tabWidth\": 2,
+  \"prettier.useTabs\": false
+}
+EOF
+"
+
 echo "✅ VS Code installation and setup complete"
+echo "📝 Sample theme file created at: ~/.vscode/themes/sample-theme.json"
