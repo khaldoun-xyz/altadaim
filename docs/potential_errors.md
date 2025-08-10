@@ -19,3 +19,10 @@
   VBoxManage: error: Details: code NS_ERROR_FAILURE (0x80004005),
   component ConsoleWrap, interface IConsole"
   - `sudo modprobe -r kvm_intel kvm`
+
+## fixes
+
+- if your wifi is not available, follow these steps:
+  <https://askubuntu.com/questions/55868/installing-broadcom-wireless-drivers>
+- if your webcam is not available, follow these steps:
+  <https://github.com/patjak/facetimehd/wiki/Installation>
