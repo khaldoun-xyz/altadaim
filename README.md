@@ -145,42 +145,7 @@ line like this:
 Save and close your .bashrc, restart your terminal
 and type in `psql_NAME`. Et voilà.
 
-### Git
-
-During the Altadaim installation, you set up your GitHub ssh key.
-Version control is a very basic and very useful tool.
-
-- [This video series](https://www.youtube.com/watch?v=rH3zE7VlIMs)
-  gives you a good basic overview.
-- To test your git knowledge, [clone this repo](https://github.com/juanfresia/git-challenge)
-  and complete the challenges.
-
-#### Git commands
-
-These are good case practices that we use at Khaldoun.
-
-- When pushing a PR, rebase to the master branch with `git rebase master`
-  (make sure you have the most recent master locally!)
-  and resolve any merge conflict *before* asking for review.
-- When your PR isn't ready for review yet (work in progress)
-  but you still want to share it with others, open the PR as `draft`.
-- Squash minor git commits into fewer more relevant commits.
-  Set "Squash and merge" as default merge option of branches
-  (this collapses a branch with many commits into one feature commit in master).
-- Where helpful, use gitmojis in your commit messages (e.g. :bug:): <https://gitmoji.dev/>.
-- Don't open PRs without descriptions.
-  Make sure to minimise typos and formatting issues.
-- PRs that are too large cannot be merged (extreme case: 5000+ files are too large).
-- Once you dealt with a PR comment,
-  click on "Resolve conversation" to indicate that you consider it resolved.
-  Either resolve all comments or provide responses.
-- Close open issues with a reference to the PRs
-  in which they are resolved after you've resolved them.
-- use at least these pre-commit hooks: end-of-file-fixer,
-  trailing-whitespace, black, isort.
-  Always make sure pre-commit hooks have run *before* asking for a review.
-
-### Docker
+#### Docker
 
 Containerising applications with Docker removes
 many of the headaches around server configuration.
