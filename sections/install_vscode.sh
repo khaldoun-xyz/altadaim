@@ -124,7 +124,7 @@ for extension in "${extensions[@]}"; do
 done
 
 # Create a sample JSON file with schema for color themes
-echo "Creating sample JSON configuration files..."
+echo "Creating Imeen's theme JSON configuration files..."
 su - "$ORIGINAL_USER" -c "
   mkdir -p ~/.vscode/themes
  cat > ~/.vscode/themes/imene-theme.json << 'EOF'
