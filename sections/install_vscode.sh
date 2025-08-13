@@ -127,7 +127,7 @@ done
 echo "Creating sample JSON configuration files..."
 su - "$ORIGINAL_USER" -c "
   mkdir -p ~/.vscode/themes
-  cat > ~/.vscode/themes/sample-theme.json << 'EOF'
+ cat > ~/.vscode/themes/imene-theme.json << 'EOF'
 {
   \"\$schema\": \"vscode://schemas/color-theme\",
   \"type\": \"hcDark\",
@@ -176,4 +176,4 @@ EOF
 "
 
 echo "✅ VS Code installation and setup complete"
-echo "📝 Sample theme file created at: ~/.vscode/themes/sample-theme.json"
+echo "📝 Imene's theme file created at: ~/.vscode/themes/imene-theme.json"
